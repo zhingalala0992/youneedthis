@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>You Need This - Cycling Gear Reviews</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#fff;color:#111}
+  input,button{font-family:inherit}
+  a{color:inherit}
+  img{display:block}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const{useState,useEffect}=React;
+const RED="#e53e3e",BG="#ffffff",BORDER="#e8e8e8",TEXT="#111111",MUTED="#666666",SUBTLE="#f5f5f5";
+
+const IMG={
+  helmet:     "https://i.ibb.co/CsXPS7b1/Helmet-E-Motorad.png",
+  sunglasses: "https://i.ibb.co/s9wKd2pt/Rockbros-Eyewear.png",
+  frontlight: "https://i.ibb.co/5h1QwsHT/Linist-Waterproof-Headlight-1800m-Ah-150m-Long-Range.png",
+  projector:  "https://i.ibb.co/YBjGD3Yn/Linist-Ultra-Bright1200-Lumens-Bicycle-Light-with-Cutoff-Line-Remote-Control.png",
+  taillights: "https://i.ibb.co/Q7wbDccp/Tail-Light.png",
+  spokewrench:"https://i.ibb.co/NgjFhHXF/Spoke-Nipple-Key-Wheel-Rim-Wrench-Spanner-Mini-Tool.png",
+  multitool:  "https://i.ibb.co/xtVyRGkP/Multitool.png",
+  bdallen:    "https://i.ibb.co/r2bcPqPG/Allen-Keys-Set-AGARO.png",
+  agaro:      "https://i.ibb.co/r2bcPqPG/Allen-Keys-Set-AGARO.png",
+  inflator:   "https://i.ibb.co/Y7J8bf1f/Portronics-Vaayu.png",
+  powerbank:  "https://i.ibb.co/DfGc7pdT/Power-Bank-20k-Ambrane.png",
+  bottle:     "https://i.ibb.co/wFWCxCYy/Sipper-with-insulation-barrier.png",
+};
+
+const P=[
+  {id:1,name:"EMotorad Beacon Bicycle Helmet",short:"EMotorad Beacon Helmet",cat:"Safety & Visibility",catShort:"Safety",verdict:"Best helmet for night rides — the built-in lights are genuinely bright. I've done 200+ night rides in Delhi traffic with this on.",link:"https://amzn.to/4lpkkcu",rating:4.8,price:"₹2,499",badge:"#1 Pick for Night Riding",pros:[{i:"💡",t:"LED front + rear built-in"},{i:"🛡️",t:"ISI certified safety shell"},{i:"🔌",t:"USB rechargeable lights"},{i:"🌙",t:"Perfect for dawn/dusk rides"}],cons:["Slightly heavier","Premium price"],emoji:"⛑️",bg:"#fff8f0",imgKey:"helmet"},
+  {id:2,name:"ROCKBROS Photochromic Cycling Sunglasses",short:"ROCKBROS Photochromic Sunglasses",cat:"Safety & Visibility",catShort:"Safety",verdict:"I wear these on every single morning ride — one pair from dark roads to full Delhi sun without ever swapping",link:"https://amzn.to/4cFRMsR",rating:4.6,price:"₹1,899",badge:null,pros:[{i:"🕶️",t:"Auto-adjusting lens"},{i:"☀️",t:"UV400 protection"},{i:"⚡",t:"Instant transition"}],cons:["Not polarized"],emoji:"🕶️",bg:"#f0f8ff",imgKey:"sunglasses"},
+  {id:3,name:"LETTURE Rechargeable Front Headlight",short:"LETTURE Front Headlight",cat:"Safety & Visibility",catShort:"Safety",verdict:"Best budget front light — reliable, bright, easy to charge",link:"https://amzn.to/4s1kLvU",rating:4.5,price:"₹599",badge:"Best Value",pros:[{i:"🔌",t:"USB rechargeable"},{i:"💡",t:"Multiple modes"},{i:"🔧",t:"Easy to mount"}],cons:["Average battery"],emoji:"🔦",bg:"#fffdf0",imgKey:"frontlight"},
+  {id:4,name:"ESLNF Projector Bicycle Headlight",short:"ESLNF Projector Headlight",cat:"Safety & Visibility",catShort:"Safety",verdict:"Hits like a car headlight — overkill in the best way",link:"https://amzn.to/3P4geuc",rating:4.7,price:"₹1,299",badge:null,pros:[{i:"🎯",t:"Racing-grade projector"},{i:"💪",t:"Extremely bright"}],cons:["Can blind if mis-angled"],emoji:"💡",bg:"#f0f0ff",imgKey:"projector"},
+  {id:6,name:"USB Rechargeable Tail Lights Set of 2",short:"Tail Lights Set of 2",cat:"Safety & Visibility",catShort:"Safety",verdict:"Best value safety upgrade — two lights under ₹300",link:"https://amzn.to/46P8dj0",rating:4.4,price:"₹299",badge:"Budget Pick",pros:[{i:"✌️",t:"Two for price of one"},{i:"🔌",t:"USB rechargeable"}],cons:["Basic build"],emoji:"🚨",bg:"#fff5f5",imgKey:"taillights"},
+  {id:7,name:"Spoke / Nipple Wrench",short:"Spoke / Nipple Wrench",cat:"Tools & Maintenance",catShort:"Tools",verdict:"Fix a wobbly wheel yourself — takes 10 minutes to learn",link:"https://amzn.to/4sGtrbe",rating:4.5,price:"₹349",badge:null,pros:[{i:"🔧",t:"Multiple sizes"},{i:"💪",t:"Durable steel"}],cons:["Learning curve"],emoji:"🔧",bg:"#f5f5f5",imgKey:"spokewrench"},
+  {id:8,name:"OKAI 16-in-1 Bike Multi-tool",short:"OKAI 16-in-1 Bike Multi-tool",cat:"Tools & Maintenance",catShort:"Tools",verdict:"The pocket multi-tool I am buying this month — covers every bolt on a bike in something the size of a lighter",link:"https://amzn.to/4b1PG5p",rating:4.8,price:"₹799",badge:"Editor's Pick",pros:[{i:"🛠️",t:"16 tools in one"},{i:"👌",t:"Pocket-sized"},{i:"⛓️",t:"Includes chain tool"}],cons:["Hex keys slightly short"],emoji:"🛠️",bg:"#f0fff4",imgKey:"multitool"},
+  {id:9,name:"Black+Decker Allen Key Set 8-piece",short:"Black+Decker Allen Key Set",cat:"Tools & Maintenance",catShort:"Tools",verdict:"Every cyclist's first tool — start here",link:"https://amzn.to/40oNFKo",rating:4.6,price:"₹299",badge:null,pros:[{i:"✅",t:"Trusted brand"},{i:"🔑",t:"8 key sizes"}],cons:["No ball-end"],emoji:"🔑",bg:"#f5f5f5",imgKey:"bdallen"},
+  {id:10,name:"AGARO 26-piece Hex Allen Key Set",short:"AGARO 26-piece Hex Set",cat:"Tools & Maintenance",catShort:"Tools",verdict:"The complete home workshop kit for serious cyclists",link:"https://amzn.to/4sAgTSq",rating:4.7,price:"₹649",badge:null,pros:[{i:"⚙️",t:"26 pieces"},{i:"🎯",t:"Ball-end + MM/Inch"}],cons:["Overkill for casual"],emoji:"⚙️",bg:"#f5f5f5",imgKey:"agaro"},
+  {id:11,name:"Portronics Digital Tyre Inflator",short:"Portronics Digital Tyre Inflator",cat:"On-Ride Essentials",catShort:"Ride Essentials",verdict:"I use this before every single ride — dial your PSI, press go, it stops itself. Changed my pre-ride routine completely.",link:"https://amzn.to/4loQ6Gw",rating:4.8,price:"₹1,299",badge:"Editor's Pick",pros:[{i:"🎯",t:"Auto PSI cut-off"},{i:"📊",t:"Digital display"},{i:"📦",t:"Portable"}],cons:["Slower than floor pump"],emoji:"💨",bg:"#f0f8ff",imgKey:"inflator"},
+  {id:12,name:"Ambrane 20000mAh Powerbank",short:"Ambrane 20000mAh Powerbank",cat:"On-Ride Essentials",catShort:"Ride Essentials",verdict:"Charges Garmin + phone + lights on a 100km ride",link:"https://amzn.to/4bzwCeR",rating:4.7,price:"₹1,499",badge:null,pros:[{i:"⚡",t:"22.5W fast charging"},{i:"🔋",t:"20000mAh"}],cons:["Heavy for jersey"],emoji:"🔋",bg:"#f0fff4",imgKey:"powerbank"},
+  {id:13,name:"ROCKBROS Insulated Cycling Water Bottle",short:"ROCKBROS Thermal Water Bottle",cat:"On-Ride Essentials",catShort:"Ride Essentials",verdict:"Still cold after 40km in Delhi summer heat",link:"https://amzn.to/46UtW98",rating:4.6,price:"₹899",badge:null,pros:[{i:"🧊",t:"Triple-layer insulation"},{i:"✅",t:"BPA-free"}],cons:["Heavier than basics"],emoji:"🍶",bg:"#f0fbff",imgKey:"bottle"},
+];
+
+const STORIES=[
+  {id:1,title:"What I Carry on Every 40km Morning Ride",cat:"Gear Essentials",excerpt:"After 1,000+ morning rides, here's the gear that made the cut. No fluff, just the essentials that have proven themselves kilometer after kilometer.",date:"Mar 15, 2024",readTime:"5 min read",pids:[8,12,13,3],
+   body:[{h:"The Non-Negotiables",p:"The OKAI 16-in-1 Multi-tool lives in my left jersey pocket. Full stop. It's been on every single ride for 8 months. I've used it to tighten a rattling saddle clamp at the 20km mark, fix a derailleur mid-ride, and help a stranger with a mechanical on the highway."},{h:"Light Up or Stay Home",p:"I don't care if it's 5:30am — the LETTURE front headlight goes on every ride. Delhi traffic doesn't care about dawn."},{h:"Power for the Long Haul",p:"The Ambrane 20000mAh powerbank earns its weight on anything over 60km. It runs my Garmin, charges my phone, and tops up my helmet lights."},{h:"The Thermal Bottle",p:"The ROCKBROS insulated bottle is the best quality-of-life upgrade I've made. In Delhi summers, a regular bottle gives you warm water by km 15. This one stays cold for the entire 40km."}]},
+  {id:2,title:"Night Riding in Delhi — The Gear That Keeps Me Safe",cat:"Safety",excerpt:"Night riding requires serious visibility upgrades. Here's my tested setup for staying safe on Delhi roads after dark.",date:"Mar 10, 2024",readTime:"6 min read",pids:[1,4,6],
+   body:[{h:"The Helmet That Changed Everything",p:"The EMotorad Beacon helmet was a game-changer. Now I have visibility at head level — exactly where car drivers look. The built-in LEDs are genuinely bright, not decorative."},{h:"The Nuclear Option for Headlights",p:"The ESLNF Projector Headlight is overkill. It hits like a car headlight. On Delhi roads at night, overkill is the right call."},{h:"The Bottom Line",p:"Night riding in Delhi is genuinely dangerous. But with the right gear, it's also the most peaceful riding you'll ever do — empty roads, cool air, the city lit up around you."}]},
+];
+
+const useW=()=>{const[w,setW]=useState(900);useEffect(()=>{setW(window.innerWidth);const h=()=>setW(window.innerWidth);window.addEventListener("resize",h);return()=>window.removeEventListener("resize",h);},[]);return w;};
+
+const PImg=({prod,h=200})=>{
+  const[err,setErr]=useState(false);
+  const src=IMG[prod.imgKey];
+  return(
+    <div style={{width:"100%",height:h,background:prod.bg,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",flexShrink:0}}>
+      {src&&!err
+        ?<img src={src} alt={prod.name} onError={()=>setErr(true)} style={{width:"100%",height:"100%",objectFit:"contain",padding:16,boxSizing:"border-box"}}/>
+        :<span style={{fontSize:h*0.33,userSelect:"none"}}>{prod.emoji}</span>}
+    </div>
+  );
+};
+
+const Stars=({r,size=13})=>(
+  <span style={{display:"inline-flex",alignItems:"center",gap:1}}>
+    {[1,2,3,4,5].map(i=><span key={i} style={{fontSize:size,color:i<=Math.floor(r)?RED:"#ddd",lineHeight:1}}>★</span>)}
+  </span>
+);
+
+const Btn=({href,onClick,label,variant="ghost",sm=false})=>{
+  const base={fontWeight:700,fontSize:sm?12:14,padding:sm?"7px 16px":"9px 22px",borderRadius:6,cursor:"pointer",textDecoration:"none",display:"inline-block",whiteSpace:"nowrap",border:"none"};
+  const ghost={...base,background:"none",color:MUTED};
+  const outline={...base,background:"none",color:TEXT,border:`1.5px solid ${BORDER}`};
+  const style=variant==="outline"?outline:ghost;
+  if(href) return <a href={href} target="_blank" rel="noopener noreferrer" style={style}>{label}</a>;
+  return <button onClick={onClick} style={style}>{label}</button>;
+};
+
+const Nav=({page,nav})=>{
+  const w=useW(),[mob,setMob]=useState(false);
+  return(
+    <nav style={{background:BG,borderBottom:`1px solid ${BORDER}`,position:"sticky",top:0,zIndex:100}}>
+      <div style={{maxWidth:900,margin:"0 auto",padding:"0 20px",height:56,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <button onClick={()=>nav("home")} style={{background:"none",border:"none",cursor:"pointer",padding:0,display:"flex",alignItems:"center",gap:8}}>
+          <span style={{fontWeight:700,fontSize:16,color:TEXT}}>You Need This</span>
+          {w>580&&<span style={{color:MUTED,fontSize:13}}>— Cycling Gear Tested on Real Roads</span>}
+        </button>
+        <button onClick={()=>setMob(!mob)} style={{background:"none",border:"none",cursor:"pointer",color:TEXT,fontSize:20,padding:"4px 8px"}}>{mob?"✕":"☰"}</button>
+      </div>
+      {mob&&(
+        <div style={{background:BG,borderTop:`1px solid ${BORDER}`,padding:"8px 20px 14px"}}>
+          {[["home","Home"],["reviews","Reviews"],["stories","Stories"],["about","About"]].map(([p,l])=>(
+            <button key={p} onClick={()=>{nav(p);setMob(false);}} style={{display:"block",width:"100%",textAlign:"left",background:"none",border:"none",cursor:"pointer",color:page===p?RED:TEXT,padding:"10px 4px",fontSize:15,fontWeight:page===p?700:400,borderBottom:`1px solid ${BORDER}`}}>{l}</button>
+          ))}
+        </div>
+      )}
+    </nav>
+  );
+};
+
+const Home=({nav})=>{
+  const w=useW(),mob=w<700,feat=P[0],picks=[P[1],P[7],P[10]];
+  const[email,setEmail]=useState(""),[subbed,setSubbed]=useState(false);
+  return(
+    <div style={{maxWidth:900,margin:"0 auto",padding:mob?"0 16px":"0 24px"}}>
+      <div style={{padding:mob?"48px 0 36px":"72px 0 52px"}}>
+        <h1 style={{fontWeight:900,fontSize:mob?"clamp(52px,14vw,76px)":"clamp(60px,9vw,92px)",lineHeight:0.88,letterSpacing:-3,margin:"0 0 24px",textTransform:"uppercase"}}>
+          <span style={{color:TEXT,display:"block"}}>GEAR</span>
+          <span style={{color:RED,display:"block"}}>THAT WORKS</span>
+          <span style={{color:TEXT,display:"block"}}>ON REAL</span>
+          <span style={{color:TEXT,display:"block"}}>ROADS</span>
+        </h1>
+        <p style={{color:MUTED,fontSize:mob?15:17,lineHeight:1.6,marginBottom:24,maxWidth:480}}>
+          <span style={{borderLeft:`3px solid ${RED}`,paddingLeft:10,display:"block"}}>I ride 40km every day — here's what actually works.<br/>No sponsored junk, no guesswork.</span>
+        </p>
+        <div style={{display:"flex",gap:8,marginBottom:20,flexWrap:"wrap"}}>
+          <Btn onClick={()=>nav("reviews")} label="See All Reviews" variant="ghost"/>
+          <Btn onClick={()=>nav("stories")} label="Read Stories" variant="outline"/>
+        </div>
+        <p style={{color:RED,fontWeight:600,fontSize:14,marginBottom:28}}>Tested on Delhi roads every day</p>
+        <div style={{display:"flex",flexDirection:"column",gap:10,maxWidth:480}}>
+          {[["⚙️","Tested Since","Jan 2023"],["✅","Rides Done","40km × 365 Days"]].map(([ic,label,val])=>(
+            <div key={label} style={{display:"flex",alignItems:"center",gap:14,border:`1px solid ${BORDER}`,borderRadius:10,padding:"14px 18px"}}>
+              <span style={{fontSize:22,width:40,height:40,background:SUBTLE,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{ic}</span>
+              <div><div style={{fontSize:12,color:MUTED,marginBottom:2}}>{label}</div><div style={{fontWeight:700,fontSize:17,color:TEXT}}>{val}</div></div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <hr style={{border:"none",borderTop:`1px solid ${BORDER}`,margin:"0 0 44px"}}/>
+
+      <div style={{marginBottom:52}}>
+        <div style={{display:"inline-block",border:`1px solid ${BORDER}`,borderRadius:6,padding:"5px 12px",fontSize:12,color:MUTED,marginBottom:18}}>Editor's Top Pick · March 2026</div>
+        <div style={{border:`1px solid ${BORDER}`,borderRadius:14,overflow:"hidden"}}>
+          <div style={{borderBottom:`1px solid ${BORDER}`}}><PImg prod={feat} h={mob?260:380}/></div>
+          <div style={{padding:mob?"20px":"28px"}}>
+            <Stars r={feat.rating} size={18}/>
+            <div style={{color:RED,fontWeight:600,fontSize:13,marginTop:6,marginBottom:8}}>{feat.badge}</div>
+            <h2 style={{fontWeight:700,fontSize:mob?22:28,color:TEXT,margin:"0 0 14px",lineHeight:1.2}}>{feat.name}</h2>
+            <div style={{marginBottom:16}}>
+              <div style={{fontWeight:600,fontSize:11,color:MUTED,marginBottom:6,textTransform:"uppercase",letterSpacing:0.5}}>Rider Verdict</div>
+              <p style={{fontStyle:"italic",color:MUTED,fontSize:14,lineHeight:1.65,margin:0}}>"{feat.verdict}"</p>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px 20px",marginBottom:20}}>
+              {feat.pros.map((p,i)=>(
+                <div key={i} style={{display:"flex",alignItems:"center",gap:7}}>
+                  <span style={{fontSize:14,flexShrink:0}}>{p.i}</span>
+                  <span style={{fontSize:13,color:MUTED}}>{p.t}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{display:"flex",gap:4,alignItems:"center",paddingTop:16,borderTop:`1px solid ${BORDER}`,flexWrap:"wrap"}}>
+              <Btn href={feat.link} label="Buy on Amazon" variant="ghost"/>
+              <Btn onClick={()=>nav("review",{prod:feat})} label="Read Full Review" variant="outline"/>
+            </div>
+            <p style={{color:"#ccc",fontSize:11,marginTop:10}}>* Affiliate link. I earn a small commission at no extra cost to you. I own and use this product.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style={{marginBottom:52}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:20}}>
+          <div>
+            <div style={{fontWeight:700,fontSize:mob?24:30,color:TEXT,lineHeight:1}}>March 2026</div>
+            <div style={{fontWeight:400,fontSize:mob?18:22,color:MUTED,lineHeight:1.3}}>Gear Picks</div>
+          </div>
+          <button onClick={()=>nav("reviews")} style={{background:"none",border:"none",cursor:"pointer",color:RED,fontWeight:600,fontSize:13}}>View All Reviews →</button>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+          {picks.map(p=>(
+            <div key={p.id} style={{border:`1px solid ${BORDER}`,borderRadius:12,overflow:"hidden",cursor:"pointer"}} onClick={()=>nav("review",{prod:p})}>
+              <div style={{borderBottom:`1px solid ${BORDER}`}}><PImg prod={p} h={mob?200:240}/></div>
+              <div style={{padding:"16px 18px 14px"}}>
+                <h3 style={{fontWeight:700,fontSize:16,color:TEXT,margin:"0 0 6px"}}>{p.name}</h3>
+                <p style={{fontStyle:"italic",color:MUTED,fontSize:13,margin:"0 0 8px",lineHeight:1.55}}>"{p.verdict}"</p>
+                <Stars r={p.rating} size={14}/>
+                <div style={{display:"flex",gap:4,marginTop:14,paddingTop:12,borderTop:`1px solid ${BORDER}`}}>
+                  <Btn href={p.link} label="Buy on Amazon" variant="ghost" sm/>
+                  <Btn onClick={(e)=>{e.stopPropagation();nav("review",{prod:p});}} label="Review" variant="outline" sm/>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <hr style={{border:"none",borderTop:`1px solid ${BORDER}`,margin:"0 0 44px"}}/>
+
+      <div style={{marginBottom:52}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:20}}>
+          <div>
+            <div style={{fontSize:12,color:MUTED,marginBottom:2}}>From the Saddle</div>
+            <h2 style={{fontWeight:700,fontSize:mob?22:26,color:TEXT,margin:0}}>Stories & Field Notes</h2>
+          </div>
+          <button onClick={()=>nav("stories")} style={{background:"none",border:"none",cursor:"pointer",color:RED,fontWeight:600,fontSize:13}}>All Stories →</button>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:10}}>
+          {STORIES.map(s=>(
+            <div key={s.id} onClick={()=>nav("story",{story:s})} style={{border:`1px solid ${BORDER}`,borderRadius:12,padding:"20px",cursor:"pointer"}}>
+              <h3 style={{fontWeight:700,fontSize:16,color:TEXT,margin:"0 0 8px"}}>{s.title}</h3>
+              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8,flexWrap:"wrap"}}>
+                <span style={{border:`1px solid ${BORDER}`,borderRadius:20,padding:"2px 9px",fontSize:11,color:MUTED}}>{s.cat}</span>
+                <span style={{fontSize:12,color:MUTED}}>{s.date} · {s.readTime}</span>
+              </div>
+              <p style={{fontSize:13,color:MUTED,lineHeight:1.6,margin:0}}>{s.excerpt}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <hr style={{border:"none",borderTop:`1px solid ${BORDER}`,margin:"0 0 44px"}}/>
+
+      <div style={{marginBottom:52}}>
+        <h2 style={{fontWeight:700,fontSize:mob?22:26,color:TEXT,textAlign:"center",marginBottom:20}}>Follow the Ride</h2>
+        <div style={{display:"flex",flexDirection:"column",gap:10}}>
+          {[["📷","Instagram","@ashishraj_0992","Daily ride photos & gear shots","https://instagram.com"],["▶️","YouTube","Wandering Wizards","Full gear review videos","https://youtube.com"],["📌","Pinterest","You Need This","Curated cycling gear boards","https://pinterest.com"]].map(([ic,nm,handle,desc,url])=>(
+            <a key={nm} href={url} target="_blank" rel="noopener noreferrer" style={{display:"flex",alignItems:"center",gap:14,border:`1px solid ${BORDER}`,borderRadius:10,padding:"14px 18px",textDecoration:"none"}}>
+              <span style={{fontSize:26,width:46,height:46,background:SUBTLE,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{ic}</span>
+              <div>
+                <div style={{fontWeight:700,fontSize:15,color:TEXT,marginBottom:1}}>{nm}</div>
+                <div style={{fontSize:13,color:MUTED}}>{handle}</div>
+                <div style={{fontSize:12,color:"#aaa"}}>{desc}</div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <hr style={{border:"none",borderTop:`1px solid ${BORDER}`,margin:"0 0 44px"}}/>
+
+      <div style={{textAlign:"center",paddingBottom:64}}>
+        <span style={{fontSize:38}}>📬</span>
+        <h2 style={{fontWeight:700,fontSize:mob?22:28,color:TEXT,margin:"12px 0 8px"}}>Get Weekly Gear Picks</h2>
+        <p style={{color:MUTED,fontSize:14,marginBottom:22,lineHeight:1.7}}>From a real cyclist. Every Friday — one product, one honest verdict. No spam. Unsubscribe anytime.</p>
+        {subbed?(
+          <div style={{background:"#f0fff4",border:"1px solid #9ae6b4",borderRadius:8,padding:"14px",color:"#276749",fontWeight:600,fontSize:14,maxWidth:420,margin:"0 auto"}}>✓ You're subscribed! See you Friday.</div>
+        ):(
+          <div style={{display:"flex",maxWidth:420,margin:"0 auto",border:`1px solid ${BORDER}`,borderRadius:8,overflow:"hidden"}}>
+            <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="Enter your email" style={{flex:1,background:BG,border:"none",color:TEXT,padding:"13px 16px",fontSize:14,outline:"none"}}/>
+            <button onClick={()=>{if(email.includes("@"))setSubbed(true);}} style={{background:"none",border:"none",borderLeft:`1px solid ${BORDER}`,color:MUTED,cursor:"pointer",padding:"13px 18px",fontSize:14,fontWeight:600}}>Subscribe</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const Reviews=({nav})=>{
+  const w=useW(),[cat,setCat]=useState("All");
+  const cats=["All","Safety & Visibility","Tools & Maintenance","On-Ride Essentials"];
+  const filtered=cat==="All"?P:P.filter(p=>p.cat===cat);
+  return(
+    <div style={{maxWidth:900,margin:"0 auto",padding:w<700?"28px 16px":"40px 24px"}}>
+      <h1 style={{fontWeight:700,fontSize:28,color:TEXT,marginBottom:4}}>All Reviews</h1>
+      <p style={{color:MUTED,fontSize:14,marginBottom:18}}>12 products tested on real Delhi roads. No sponsored content.</p>
+      <div style={{display:"flex",gap:6,marginBottom:24,flexWrap:"wrap"}}>
+        {cats.map(c=>(
+          <button key={c} onClick={()=>setCat(c)} style={{background:cat===c?SUBTLE:BG,color:cat===c?TEXT:MUTED,border:`1px solid ${cat===c?"#999":BORDER}`,padding:"6px 14px",borderRadius:20,cursor:"pointer",fontWeight:cat===c?600:400,fontSize:13}}>
+            {c}
+          </button>
+        ))}
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:14}}>
+        {filtered.map(p=>(
+          <div key={p.id} style={{border:`1px solid ${BORDER}`,borderRadius:12,overflow:"hidden",cursor:"pointer"}} onClick={()=>nav("review",{prod:p})}>
+            <div style={{borderBottom:`1px solid ${BORDER}`}}><PImg prod={p} h={w<600?200:260}/></div>
+            <div style={{padding:"16px 18px 6px"}}>
+              <Stars r={p.rating} size={13}/>
+              {p.badge&&<span style={{color:RED,fontWeight:600,fontSize:12,marginLeft:8}}>{p.badge}</span>}
+              <h3 style={{fontWeight:700,fontSize:16,color:TEXT,margin:"6px 0 4px"}}>{p.name}</h3>
+              <p style={{fontSize:13,color:MUTED,fontStyle:"italic",margin:"0 0 6px",lineHeight:1.5}}>"{p.verdict}"</p>
+              <span style={{fontWeight:600,fontSize:14,color:TEXT}}>{p.price}</span>
+            </div>
+            <div style={{padding:"6px 18px 16px",display:"flex",gap:4}}>
+              <Btn href={p.link} label="Buy on Amazon" variant="ghost" sm/>
+              <Btn onClick={(e)=>{e.stopPropagation();nav("review",{prod:p});}} label="Review" variant="outline" sm/>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const Review=({prod,nav})=>{
+  const w=useW(),[shared,setShared]=useState(false);
+  const related=P.filter(p=>p.cat===prod.cat&&p.id!==prod.id).slice(0,3);
+  return(
+    <div style={{maxWidth:680,margin:"0 auto",padding:w<700?"24px 16px 100px":"40px 24px 100px"}}>
+      <button onClick={()=>nav("reviews")} style={{background:"none",border:"none",color:MUTED,cursor:"pointer",marginBottom:16,fontSize:13,padding:0}}>← All Reviews</button>
+      <div style={{border:`1px solid ${BORDER}`,borderRadius:14,overflow:"hidden",marginBottom:22}}>
+        <div style={{borderBottom:`1px solid ${BORDER}`}}><PImg prod={prod} h={w<600?240:340}/></div>
+        <div style={{padding:w<600?"18px":"24px"}}>
+          <Stars r={prod.rating} size={18}/>
+          {prod.badge&&<div style={{color:RED,fontWeight:600,fontSize:13,marginTop:6}}>{prod.badge}</div>}
+          <h1 style={{fontWeight:700,fontSize:w<600?22:28,color:TEXT,margin:"8px 0 14px",lineHeight:1.2}}>{prod.name}</h1>
+          <div style={{marginBottom:16}}>
+            <div style={{fontWeight:600,fontSize:11,color:MUTED,textTransform:"uppercase",letterSpacing:0.8,marginBottom:7}}>Rider Verdict</div>
+            <p style={{fontStyle:"italic",color:MUTED,fontSize:14,lineHeight:1.7,margin:0}}>"{prod.verdict}"</p>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px 16px",marginBottom:18,paddingBottom:18,borderBottom:`1px solid ${BORDER}`}}>
+            {prod.pros.map((p,i)=>(
+              <div key={i} style={{display:"flex",alignItems:"center",gap:7}}>
+                <span style={{fontSize:14}}>{p.i}</span>
+                <span style={{fontSize:13,color:MUTED}}>{p.t}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+            <Btn href={prod.link} label="Buy on Amazon" variant="ghost"/>
+            <span style={{fontSize:15,fontWeight:700,color:TEXT}}>{prod.price}</span>
+          </div>
+          <p style={{color:"#ccc",fontSize:11,marginTop:10}}>* Affiliate link. I earn a small commission at no extra cost to you. I own and use this product.</p>
+        </div>
+      </div>
+      <div style={{color:MUTED,lineHeight:1.85,fontSize:14,marginBottom:24}}>
+        <h2 style={{fontSize:17,fontWeight:700,color:TEXT,marginBottom:10}}>The Full Story</h2>
+        <p>After putting the <strong style={{color:TEXT}}>{prod.name}</strong> through extensive testing on Delhi roads — early mornings, late evenings, rain and summer heat — here's the complete picture.</p>
+        <p style={{marginTop:10}}>This product earns its place in my kit for one reason: reliability. At {prod.price}, the value is strong.</p>
+        <p style={{marginTop:10}}>The verdict: <em>"{prod.verdict}"</em> — after months of testing, I stand by every word.</p>
+      </div>
+      <div style={{display:"flex",gap:7,flexWrap:"wrap",marginBottom:28,alignItems:"center"}}>
+        <span style={{fontSize:12,color:MUTED,fontWeight:600}}>Share:</span>
+        <button onClick={()=>window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(prod.name+" "+prod.link)}`)} style={{background:"#25d366",color:"#fff",border:"none",cursor:"pointer",padding:"7px 12px",borderRadius:6,fontSize:11,fontWeight:700}}>WhatsApp</button>
+        <button onClick={()=>window.open(`https://pinterest.com/pin/create/button/?description=${encodeURIComponent(prod.name)}`)} style={{background:"#e60023",color:"#fff",border:"none",cursor:"pointer",padding:"7px 12px",borderRadius:6,fontSize:11,fontWeight:700}}>📌 Pin</button>
+        <button onClick={()=>{try{navigator.clipboard.writeText(prod.link);}catch(e){}setShared(true);setTimeout(()=>setShared(false),2000);}} style={{background:BG,color:shared?RED:MUTED,border:`1px solid ${shared?RED:BORDER}`,cursor:"pointer",padding:"7px 12px",borderRadius:6,fontSize:11,fontWeight:600}}>{shared?"✓ Copied!":"Copy Link"}</button>
+      </div>
+      {related.length>0&&(
+        <div>
+          <h3 style={{fontWeight:700,fontSize:16,color:TEXT,marginBottom:12}}>Also Consider</h3>
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>
+            {related.map(p=>(
+              <div key={p.id} onClick={()=>nav("review",{prod:p})} style={{display:"flex",border:`1px solid ${BORDER}`,borderRadius:10,overflow:"hidden",cursor:"pointer",alignItems:"stretch"}}>
+                <div style={{width:90,flexShrink:0,borderRight:`1px solid ${BORDER}`}}><PImg prod={p} h={90}/></div>
+                <div style={{flex:1,padding:"12px 14px"}}>
+                  <div style={{fontWeight:600,color:TEXT,fontSize:13,marginBottom:4}}>{p.short}</div>
+                  <Stars r={p.rating} size={11}/>
+                </div>
+                <div style={{display:"flex",alignItems:"center",padding:"0 12px",borderLeft:`1px solid ${BORDER}`,flexShrink:0}}>
+                  <Btn href={p.link} label="Buy →" variant="ghost" sm/>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      <div style={{position:"fixed",bottom:18,right:18,zIndex:50}}>
+        <a href={prod.link} target="_blank" rel="noopener noreferrer" style={{background:RED,color:"#fff",fontWeight:700,fontSize:14,padding:"11px 22px",borderRadius:999,textDecoration:"none",display:"block",boxShadow:"0 4px 16px rgba(229,62,62,0.4)"}}>Buy on Amazon →</a>
+      </div>
+    </div>
+  );
+};
+
+const Stories=({nav})=>{
+  const w=useW();
+  return(
+    <div style={{maxWidth:680,margin:"0 auto",padding:w<700?"28px 16px":"40px 24px"}}>
+      <div style={{fontSize:12,color:MUTED,marginBottom:2}}>From the Saddle</div>
+      <h1 style={{fontWeight:700,fontSize:28,color:TEXT,marginBottom:24}}>Stories & Field Notes</h1>
+      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+        {STORIES.map(s=>(
+          <div key={s.id} onClick={()=>nav("story",{story:s})} style={{border:`1px solid ${BORDER}`,borderRadius:12,padding:"20px",cursor:"pointer"}}>
+            <h2 style={{fontWeight:700,fontSize:17,color:TEXT,margin:"0 0 8px"}}>{s.title}</h2>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8,flexWrap:"wrap"}}>
+              <span style={{border:`1px solid ${BORDER}`,borderRadius:20,padding:"2px 9px",fontSize:11,color:MUTED}}>{s.cat}</span>
+              <span style={{fontSize:12,color:MUTED}}>{s.date} · {s.readTime}</span>
+            </div>
+            <p style={{fontSize:13,color:MUTED,lineHeight:1.6,margin:0}}>{s.excerpt}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const Story=({story,nav})=>{
+  const w=useW(),[shared,setShared]=useState(false);
+  const fps=story.pids.map(id=>P.find(p=>p.id===id)).filter(Boolean);
+  return(
+    <div style={{maxWidth:660,margin:"0 auto",padding:w<700?"28px 16px":"40px 24px"}}>
+      <button onClick={()=>nav("stories")} style={{background:"none",border:"none",color:MUTED,cursor:"pointer",marginBottom:16,fontSize:13,padding:0}}>← Back to Stories</button>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,flexWrap:"wrap"}}>
+        <span style={{border:`1px solid ${BORDER}`,borderRadius:20,padding:"2px 9px",fontSize:11,color:MUTED}}>{story.cat}</span>
+        <span style={{fontSize:12,color:MUTED}}>{story.date} · {story.readTime}</span>
+      </div>
+      <h1 style={{fontWeight:700,fontSize:w<700?22:28,color:TEXT,lineHeight:1.25,marginBottom:24}}>{story.title}</h1>
+      {story.body.map((sec,i)=>(
+        <div key={i} style={{marginBottom:22}}>
+          <h2 style={{fontSize:16,fontWeight:700,color:TEXT,marginBottom:8}}>{sec.h}</h2>
+          <p style={{color:MUTED,lineHeight:1.85,fontSize:14}}>{sec.p}</p>
+        </div>
+      ))}
+      <div style={{border:`1px solid ${BORDER}`,borderRadius:12,padding:"18px",marginBottom:24,marginTop:28}}>
+        <div style={{fontWeight:700,fontSize:13,color:TEXT,marginBottom:14}}>🛒 Gear Mentioned</div>
+        {fps.map(p=>(
+          <div key={p.id} style={{display:"flex",border:`1px solid ${BORDER}`,borderRadius:8,overflow:"hidden",marginBottom:8,alignItems:"stretch"}}>
+            <div style={{width:72,flexShrink:0,borderRight:`1px solid ${BORDER}`}}><PImg prod={p} h={72}/></div>
+            <div style={{flex:1,padding:"10px 12px"}}>
+              <div style={{fontWeight:600,fontSize:12,color:TEXT,marginBottom:2}}>{p.short}</div>
+              <div style={{color:MUTED,fontSize:10,fontStyle:"italic"}}>"{p.verdict.slice(0,50)}..."</div>
+            </div>
+            <div style={{display:"flex",alignItems:"center",padding:"0 10px",borderLeft:`1px solid ${BORDER}`,flexShrink:0}}>
+              <Btn href={p.link} label="Buy →" variant="ghost" sm/>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{display:"flex",gap:7,flexWrap:"wrap",alignItems:"center"}}>
+        <span style={{fontSize:12,color:MUTED,fontWeight:600}}>Share:</span>
+        <button onClick={()=>window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(story.title)}`)} style={{background:"#25d366",color:"#fff",border:"none",cursor:"pointer",padding:"7px 12px",borderRadius:6,fontSize:11,fontWeight:700}}>WhatsApp</button>
+        <button onClick={()=>window.open(`https://pinterest.com/pin/create/button/?description=${encodeURIComponent(story.title)}`)} style={{background:"#e60023",color:"#fff",border:"none",cursor:"pointer",padding:"7px 12px",borderRadius:6,fontSize:11,fontWeight:700}}>📌 Pin</button>
+        <button onClick={()=>{try{navigator.clipboard.writeText(window.location.href);}catch(e){}setShared(true);setTimeout(()=>setShared(false),2000);}} style={{background:BG,color:shared?RED:MUTED,border:`1px solid ${shared?RED:BORDER}`,cursor:"pointer",padding:"7px 12px",borderRadius:6,fontSize:11,fontWeight:600}}>{shared?"✓ Copied!":"Copy Link"}</button>
+      </div>
+    </div>
+  );
+};
+
+const About=()=>{
+  const w=useW();
+  return(
+    <div style={{maxWidth:680,margin:"0 auto",padding:w<700?"28px 16px":"48px 24px"}}>
+      <h1 style={{fontWeight:700,fontSize:28,color:TEXT,marginBottom:6}}>About You Need This</h1>
+      <p style={{color:MUTED,fontSize:15,lineHeight:1.7,fontStyle:"italic",marginBottom:32}}>"Run by a cyclist who does 40km every single day. Everything here is tested on real roads, in real conditions."</p>
+      <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:36}}>
+        {[{ic:"🔬",t:"How I Test",b:"Every product ships to Delhi and goes on real rides. Minimum 5 rides before I write a single word. If it fails, breaks, or annoys me — you'll know."},{ic:"💸",t:"Affiliate Disclosure",b:"Some links are affiliate links. If you click and buy, I earn a small commission at no extra cost. I only recommend products I actually carry on rides."},{ic:"📧",t:"Contact",b:"Have a product to test? Reach out on Instagram @ashishraj_0992 or YouTube (Wandering Wizards). I read everything."}].map(({ic,t,b})=>(
+          <div key={t} style={{border:`1px solid ${BORDER}`,borderRadius:10,padding:"18px 20px"}}>
+            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:7}}>
+              <span style={{fontSize:20}}>{ic}</span>
+              <span style={{fontWeight:700,fontSize:15,color:TEXT}}>{t}</span>
+            </div>
+            <p style={{color:MUTED,fontSize:13,lineHeight:1.7,margin:0}}>{b}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const Footer=({nav})=>(
+  <footer style={{borderTop:`1px solid ${BORDER}`,padding:"36px 24px 24px",textAlign:"center"}}>
+    <h3 style={{fontWeight:700,fontSize:18,color:TEXT,marginBottom:5}}>You Need This</h3>
+    <p style={{color:MUTED,fontSize:13,marginBottom:18}}>Cycling gear tested on real roads. 40km every day. Honest reviews only.</p>
+    <div style={{display:"flex",justifyContent:"center",gap:16,flexWrap:"wrap",marginBottom:18}}>
+      {[["about","About"],["reviews","Reviews"],["stories","Stories"]].map(([p,l])=>(
+        <button key={l} onClick={()=>nav(p)} style={{background:"none",border:"none",color:MUTED,cursor:"pointer",fontSize:13}}>{l}</button>
+      ))}
+    </div>
+    <p style={{color:"#ccc",fontSize:12}}>© 2026 You Need This. All rights reserved.</p>
+  </footer>
+);
+
+function App(){
+  const[pg,setPg]=useState({name:"home"});
+  const nav=(name,data={})=>{setPg({name,...data});window.scrollTo({top:0});};
+  return(
+    <div style={{minHeight:"100vh",background:BG,color:TEXT}}>
+      <Nav page={pg.name} nav={nav}/>
+      {pg.name==="home"&&<Home nav={nav}/>}
+      {pg.name==="reviews"&&<Reviews nav={nav}/>}
+      {pg.name==="review"&&pg.prod&&<Review prod={pg.prod} nav={nav}/>}
+      {pg.name==="stories"&&<Stories nav={nav}/>}
+      {pg.name==="story"&&pg.story&&<Story story={pg.story} nav={nav}/>}
+      {pg.name==="about"&&<About/>}
+      <Footer nav={nav}/>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
